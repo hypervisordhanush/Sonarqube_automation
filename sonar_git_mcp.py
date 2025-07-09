@@ -14,7 +14,7 @@ PROJECT_KEY = os.getenv("PROJECT_KEY", "")
 AUTH = HTTPBasicAuth(SONARQUBE_TOKEN, "")
 
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
-GITHUB_REPO = os.getenv("GITHUB_REPO", "")  # Format: user/repo
+GITHUB_REPO = os.getenv("GITHUB_REPO", "")  
 GITHUB_USER = os.getenv("GITHUB_USER", "")
 CLONE_DIR = "cloned_repo"
 NEW_BRANCH = "auto-fix-sonar-issues"
@@ -71,9 +71,47 @@ def watch_github_commit(branch: str = "main") -> dict:
     except Exception as e:
         return {"error": str(e)}
 
+# @mcp.tool()
+# def get_sonar_issues() -> dict:
+#     """Fetch unresolved SonarQube issues using SonarQube API."""
+#     try:
+#         url = f"{SONARQUBE_URL}/api/issues/search"
+#         params = {"componentKeys": PROJECT_KEY, "resolved": "false", "ps": "100"}
+#         response = requests.get(url, params=params, auth=AUTH)
+#         response.raise_for_status()
+#         json_data = response.json()
+
+#         # Log entire response for visibility (for now)
+#         print(" SonarQube API raw response:", json_data)
+
+#         issues = json_data.get("issues", [])
+#         if not issues:
+#             return {
+#                 "status": "No issues found",
+#                 "total": 0,
+#                 "issues": []
+#             }
+
+#         return {
+#             "status": "Issues found",
+#             "total": len(issues),
+#             "issues": [
+#                 {
+#                     "message": i.get("message"),
+#                     "severity": i.get("severity"),
+#                     "type": i.get("type"),
+#                     "component": i.get("component"),
+#                     "line": i.get("line")
+#                 } for i in issues
+#             ]
+#         }
+
+#     except Exception as e:
+#         return {"error": str(e)}
+
+
 @mcp.tool()
 def get_sonar_issues() -> dict:
-    """Fetch unresolved SonarQube issues, or say there are none."""
     try:
         url = f"{SONARQUBE_URL}/api/issues/search"
         params = {"componentKeys": PROJECT_KEY, "resolved": "false", "ps": "100"}
@@ -105,9 +143,10 @@ def get_sonar_issues() -> dict:
         return {"error": str(e)}
 
 
+
 @mcp.tool()
 def apply_code_fixes() -> str:
-    """🛠️ Apply formatting fixes using black and isort."""
+    """Apply formatting fixes using black and isort."""
     try:
         subprocess.run(["black", "."], cwd=CLONE_DIR, check=True)
         subprocess.run(["isort", "."], cwd=CLONE_DIR, check=True)
@@ -117,7 +156,7 @@ def apply_code_fixes() -> str:
 
 @mcp.tool()
 def commit_and_push() -> str:
-    """📤 Commit and push changes to a new GitHub branch."""
+    """Commit and push changes to a new GitHub branch."""
     try:
         subprocess.run(["git", "checkout", "-b", NEW_BRANCH], cwd=CLONE_DIR, check=True)
         subprocess.run(["git", "add", "."], cwd=CLONE_DIR, check=True)
@@ -145,7 +184,7 @@ def raise_pr() -> dict:
 
 @mcp.tool()
 def full_auto_fix_pipeline() -> dict:
-    """🏁 End-to-end: get issues → fix → commit → PR (assuming repo already cloned)."""
+    """ End-to-end: get issues → fix → commit → PR (assuming repo already cloned)."""
     steps = {}
     steps["get_sonar_issues"] = get_sonar_issues()
     steps["apply_fixes"] = apply_code_fixes()
@@ -153,11 +192,6 @@ def full_auto_fix_pipeline() -> dict:
     steps["create_pr"] = raise_pr()
     return steps
 
-# # ─── Start MCP Server ───
-# if __name__ == "__main__":
-#     print("Checking available methods in FastMCP...")
-#     print(dir(mcp))  
-#     mcp.start()
 import asyncio
 
 if __name__ == "__main__":
