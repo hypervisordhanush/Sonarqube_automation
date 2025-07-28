@@ -6,12 +6,24 @@ from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.outputs import ChatResult, ChatGeneration
 from langchain_core.tools import Tool
 from typing import List, Optional
+from dotenv import load_dotenv
+import os
+
+load_dotenv() # Load environment variables from .env file
+
+# --- Configuration ---
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable not set.")
 
 
 class GeminiLLMWrapper(BaseChatModel):
+
+    
+
     def __init__(self, api_key: str, model_name: str = "models/gemini-2.5-pro", temperature: float = 0.3):
         super().__init__()
-        genai.configure(api_key=api_key) 
+        genai.configure(api_key=GEMINI_API_KEY) 
         self._model = genai.GenerativeModel(model_name)
         self._model_name = model_name
         self._temperature = temperature
@@ -64,12 +76,12 @@ async def main():
                 "command": "python",
                 "args": ["sonar_git_mcp.py"],
                 "env": {
-                    "SONARQUBE_URL": "",
-                    "SONARQUBE_TOKEN": "",
-                    "PROJECT_KEY": "",
+                    "SONARQUBE_URL": "http://4.246.222.101:9000",
+                    "SONARQUBE_TOKEN": "sqa_5196f03334711f9cfed5749eff077d4298306c62",
+                    "PROJECT_KEY": "your-project-key",
                     "GITHUB_TOKEN": "",
-                    "GITHUB_REPO": "",
-                    "GITHUB_USER": ""
+                    "GITHUB_REPO": ""
+                   # "GITHUB_USER": ""
                 }
             }
         }
