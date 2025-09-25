@@ -81,7 +81,7 @@ async def main():
                     "PROJECT_KEY": "your-project-key",
                     "GITHUB_TOKEN": "",
                     "GITHUB_REPO": "",
-                    "GEMINI_API_KEY": "AIzaSyDC_75u_nVFUY6WJicFM5BR1ESl17Mbar4"
+                    "GEMINI_API_KEY": ""
                 }
             }
         }
