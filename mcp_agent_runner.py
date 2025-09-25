@@ -74,14 +74,14 @@ async def main():
         "mcpServers": {
             "sonarqubemcp": {
                 "command": "python",
-                "args": ["sonar_git_mcp.py"],
+                "args": ["sonar_git_mcp.py", "run_pipeline"],
                 "env": {
-                    "SONARQUBE_URL": "http://4.246.222.101:9000",
-                    "SONARQUBE_TOKEN": "sqa_5196f03334711f9cfed5749eff077d4298306c62",
+                    "SONARQUBE_URL": "http://52.188.227.180:9000",
+                    "SONARQUBE_TOKEN": "",
                     "PROJECT_KEY": "your-project-key",
                     "GITHUB_TOKEN": "",
-                    "GITHUB_REPO": ""
-                   # "GITHUB_USER": ""
+                    "GITHUB_REPO": "",
+                    "GEMINI_API_KEY": "AIzaSyDC_75u_nVFUY6WJicFM5BR1ESl17Mbar4"
                 }
             }
         }

@@ -16,9 +16,9 @@ app = FastAPI()
 GITHUB_WEBHOOK_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET")
 if not GITHUB_WEBHOOK_SECRET:
     raise ValueError("GITHUB_WEBHOOK_SECRET environment variable not set.")
-SONARQUBE_TRIGGER_URL = os.getenv("SONARQUBE_TRIGGER_URL")
-if not SONARQUBE_TRIGGER_URL:
-    raise ValueError("SONARQUBE_TRIGGER_URL environment variable not set.")
+SONARQUBE_URL = os.getenv("SONARQUBE_URL")
+if not SONARQUBE_URL:
+    raise ValueError("SONARQUBE_URL environment variable not set.")
 CI_JOB_TOKEN = os.getenv("CI_JOB_TOKEN")
 if not CI_JOB_TOKEN:
     raise ValueError("CI_JOB_TOKEN environment variable not set.")
@@ -33,7 +33,7 @@ class PullRequestPayload(BaseModel):
     repository: dict
 
 async def fetch_sonarqube_issues():
-    url = f"{SONARQUBE_TRIGGER_URL}/api/issues/search"
+    url = f"{SONARQUBE_URL}/api/issues/search"
     params = {"componentKeys": PROJECT_KEY, "resolved": "false"}
     async with httpx.AsyncClient(auth=(CI_JOB_TOKEN, "")) as client:
         response = await client.get(url, params=params)
@@ -132,7 +132,7 @@ async def github_webhook(
                 # Or you can stick with `requests` if you prefer, but it will block the event loop
                 # for the duration of the HTTP call. For quick webhooks, async is better.
         #        async with httpx.AsyncClient() as client:
-                    #response = await client.post(SONARQUBE_TRIGGER_URL, params=ci_payload)
+                    #response = await client.post(SONARQUBE_URL, params=ci_payload)
                     #response.raise_for_status()
                     #issues = await fetch_sonarqube_issues()
         #       print(f"Successfully triggered SonarQube scan for PR #{pr_number} via CI/CD.")
