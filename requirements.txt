@@ -1,4 +1,11 @@
+google-generativeai
+langchain-core
 # Add your Python dependencies here, one per line.
 # Example:
 # requests
 # python-dotenv
+
+fastapi
+uvicorn
+httpx
+python-dotenv

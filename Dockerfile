@@ -11,6 +11,9 @@ RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.
 # Copy the rest of the code
 COPY . .
 
+RUN pip install --no-cache-dir fastapi uvicorn httpx python-dotenv
+EXPOSE 5000
+
 # Expose port if your MCP server listens on a specific port (optional)
 # EXPOSE 8000
 
@@ -18,4 +21,5 @@ COPY . .
 # Entrypoint expects env vars to be passed at runtime
 
 # Default command (update as needed for your MCP server)
-CMD ["python", "sonar_git_mcp.py"]
+#CMD ["python", "sonar_git_mcp.py"]
+CMD ["uvicorn", "github_pr_hook:app", "--host", "localhost", "--port", "5000"]
